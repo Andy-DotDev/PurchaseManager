@@ -65,6 +65,14 @@ namespace PurchaseManager
                 }
             }
         }
+        public void ClearAll()
+        {
+            Purchases.Clear();
+            if (File.Exists("purchase.txt"))
+            {
+                File.Delete("purchase.txt");
+            }
+        }
     }
 
 }
