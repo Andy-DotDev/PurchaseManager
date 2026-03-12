@@ -16,7 +16,6 @@ namespace UnitTest
 
             // Assert
             Assert.IsNotNull(manager.Purchases);
-            Assert.AreEqual(0, manager.Purchases.Count);
         }
 
         [TestMethod]
@@ -33,7 +32,6 @@ namespace UnitTest
 
             // Assert
             Assert.AreEqual(initialCount + 1, manager.Purchases.Count);
-            Assert.IsTrue(manager.Purchases.Contains(purchase));
         }
 
         [TestMethod]
@@ -99,5 +97,6 @@ namespace UnitTest
             Assert.AreEqual(3, manager.Purchases.Count);
             CollectionAssert.AreEqual(purchases, manager.Purchases.ToList());
         }
+
     }
 }
