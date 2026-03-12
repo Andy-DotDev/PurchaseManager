@@ -21,7 +21,7 @@ namespace UnitTest
 
         [TestMethod]
         public void AddPurchase_ValidPurchase_AddsToList()
-        {
+        {   
             // Arrange
             var manager = new PurchaseManager.PurchaseManager();
             manager.ClearAll();
