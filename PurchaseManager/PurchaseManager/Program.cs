@@ -17,6 +17,7 @@ namespace PurchaseManager
         private ComboBox categoryFilterComboBox;
         private Button filterButton;
         private ListBox purchasesListBox;
+        private List<Purchase> currentDisplayedPurchases;
 
         public PurchaseForm()
         {
@@ -26,7 +27,7 @@ namespace PurchaseManager
             this.FormBorderStyle = FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
 
-            // === Метки ===
+            // Label
             nameLabel = new Label
             {
                 Location = new System.Drawing.Point(12, 15),
@@ -55,7 +56,6 @@ namespace PurchaseManager
                 AutoSize = true
             };
 
-            // === Поля ввода ===
             nameTextBox = new TextBox
             {
                 Location = new System.Drawing.Point(12, 35),
@@ -86,7 +86,6 @@ namespace PurchaseManager
                 Format = DateTimePickerFormat.Short
             };
 
-            // === Кнопки управления ===
             addPurchaseButton = new Button
             {
                 Location = new System.Drawing.Point(12, 70),
@@ -105,7 +104,6 @@ namespace PurchaseManager
             };
             removePurchaseButton.Click += RemovePurchaseButton_Click;
 
-            // === Фильтр ===
             filterLabel = new Label
             {
                 Location = new System.Drawing.Point(250, 75),
@@ -131,7 +129,6 @@ namespace PurchaseManager
             };
             filterButton.Click += FilterButton_Click;
 
-            // === Список покупок ===
             purchasesListBox = new ListBox
             {
                 Location = new System.Drawing.Point(12, 110),
@@ -140,7 +137,6 @@ namespace PurchaseManager
                 Font = new System.Drawing.Font("Microsoft Sans Serif", 9F)
             };
 
-            // === Добавляем элементы на форму ===
             this.Controls.Add(nameLabel);
             this.Controls.Add(nameTextBox);
             this.Controls.Add(priceLabel);
@@ -157,15 +153,19 @@ namespace PurchaseManager
             this.Controls.Add(purchasesListBox);
 
             purchaseManager = new PurchaseManager();
+            currentDisplayedPurchases = new List<Purchase>();
             UpdatePurchasesList();
         }
 
         private void UpdatePurchasesList()
         {
             purchasesListBox.Items.Clear();
+            currentDisplayedPurchases.Clear();
+
             foreach (var purchase in purchaseManager.Purchases)
             {
                 purchasesListBox.Items.Add($"{purchase.Name} - {purchase.Price} руб. ({purchase.Category})");
+                currentDisplayedPurchases.Add(purchase);
             }
         }
 
@@ -212,28 +212,28 @@ namespace PurchaseManager
                 MessageBox.Show("Выберите покупку для удаления!", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
-            string selectedItem = purchasesListBox.SelectedItem.ToString();
-            string[] parts = selectedItem.Split(new[] { '-' }, StringSplitOptions.None);
-            if (parts.Length >= 2)
+            int selectedItem = purchasesListBox.SelectedIndex;
+            DialogResult result = MessageBox.Show(
+               $"Вы уверены, что хотите удалить покупку?\n{purchasesListBox.SelectedItem}",
+               "Подтверждение удаления",
+               MessageBoxButtons.YesNo,
+               MessageBoxIcon.Question);
+            if (result == DialogResult.Yes)
             {
-                string name = parts[0].Trim();
-                decimal price;
-                if (decimal.TryParse(parts[1].Split(' ')[0], out price))
+                try
                 {
-                    var purchaseToRemove = purchaseManager.Purchases.Find(p => p.Name == name && p.Price == price);
-                    if (purchaseToRemove != null)
-                    {
-                        try
-                        {
-                            purchaseManager.RemovePurchase(purchaseToRemove);
-                            UpdatePurchasesList();
-                            MessageBox.Show("Покупка успешно удалена!", "Успех", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        }
-                        catch (Exception ex)
-                        {
-                            MessageBox.Show(ex.Message, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        }
-                    }
+
+                    Purchase purchaseToRemove = currentDisplayedPurchases[selectedItem];
+
+                    purchaseManager.RemovePurchase(purchaseToRemove);
+
+                    UpdatePurchasesList();
+
+                    MessageBox.Show("Покупка успешно удалена!", "Успех", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Ошибка при удалении: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }
