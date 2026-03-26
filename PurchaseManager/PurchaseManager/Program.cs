@@ -3,192 +3,110 @@ namespace PurchaseManager
     public class PurchaseForm : Form
     {
         private PurchaseManager purchaseManager;
-        private Label nameLabel;
         private TextBox nameTextBox;
-        private Label priceLabel;
         private TextBox priceTextBox;
-        private Label categoryLabel;
         private ComboBox categoryComboBox;
-        private Label dateLabel;
         private DateTimePicker datePicker;
         private Button addPurchaseButton;
         private Button removePurchaseButton;
-        private Label filterLabel;
         private ComboBox categoryFilterComboBox;
         private Button filterButton;
         private ListBox purchasesListBox;
-
         public PurchaseForm()
         {
             this.Text = "Управление покупками";
-            this.Width = 650;
-            this.Height = 550;
-            this.FormBorderStyle = FormBorderStyle.FixedSingle;
-            this.MaximizeBox = false;
-
-            // === Метки ===
-            nameLabel = new Label
-            {
-                Location = new System.Drawing.Point(12, 15),
-                Text = "Название:",
-                AutoSize = true
-            };
-
-            priceLabel = new Label
-            {
-                Location = new System.Drawing.Point(180, 15),
-                Text = "Цена:",
-                AutoSize = true
-            };
-
-            categoryLabel = new Label
-            {
-                Location = new System.Drawing.Point(310, 15),
-                Text = "Категория:",
-                AutoSize = true
-            };
-
-            dateLabel = new Label
-            {
-                Location = new System.Drawing.Point(440, 15),
-                Text = "Дата:",
-                AutoSize = true
-            };
-
-            // === Поля ввода ===
+            this.Width = 600;
+            this.Height = 500;
             nameTextBox = new TextBox
             {
-                Location = new System.Drawing.Point(12, 35),
-                Width = 155,
+                Location = new System.Drawing.Point(10, 10),
+                Width = 150,
                 PlaceholderText = "Название"
             };
-
             priceTextBox = new TextBox
             {
-                Location = new System.Drawing.Point(180, 35),
-                Width = 115,
+                Location = new System.Drawing.Point(170, 10),
+                Width = 100,
                 PlaceholderText = "Цена"
             };
-
             categoryComboBox = new ComboBox
             {
-                Location = new System.Drawing.Point(310, 35),
-                Width = 115,
-                DropDownStyle = ComboBoxStyle.DropDownList
+                Location = new System.Drawing.Point(280, 10),
+                Width = 100,
+                Items = { "Продукты", "Техника", "Одежда", "Прочее" }
             };
-            categoryComboBox.Items.AddRange(new object[] { "Продукты", "Техника", "Одежда", "Прочее" });
-            categoryComboBox.SelectedIndex = 0;
-
             datePicker = new DateTimePicker
             {
-                Location = new System.Drawing.Point(440, 35),
-                Width = 170,
-                Format = DateTimePickerFormat.Short
+                Location = new System.Drawing.Point(390, 10)
             };
-
-            // === Кнопки управления ===
             addPurchaseButton = new Button
             {
-                Location = new System.Drawing.Point(12, 70),
+                Location = new System.Drawing.Point(10, 40),
                 Text = "Добавить",
-                Width = 100,
-                Height = 30
+                Width = 100
             };
             addPurchaseButton.Click += AddPurchaseButton_Click;
-
             removePurchaseButton = new Button
             {
-                Location = new System.Drawing.Point(125, 70),
+                Location = new System.Drawing.Point(120, 40),
                 Text = "Удалить",
-                Width = 100,
-                Height = 30
+                Width = 100
             };
             removePurchaseButton.Click += RemovePurchaseButton_Click;
-
-            // === Фильтр ===
-            filterLabel = new Label
-            {
-                Location = new System.Drawing.Point(250, 75),
-                Text = "Фильтр по категории:",
-                AutoSize = true
-            };
-
             categoryFilterComboBox = new ComboBox
             {
-                Location = new System.Drawing.Point(400, 72),
-                Width = 120,
-                DropDownStyle = ComboBoxStyle.DropDownList
+                Location = new System.Drawing.Point(10, 70),
+                Width = 100,
+                Items = { "Все", "Продукты", "Техника", "Одежда", "Прочее" }
             };
-            categoryFilterComboBox.Items.AddRange(new object[] { "Все категории", "Продукты", "Техника", "Одежда", "Прочее" });
-            categoryFilterComboBox.SelectedIndex = 0;
-
             filterButton = new Button
             {
-                Location = new System.Drawing.Point(530, 70),
+                Location = new System.Drawing.Point(120, 70),
                 Text = "Фильтровать",
-                Width = 90,
-                Height = 30
+                Width = 100
             };
             filterButton.Click += FilterButton_Click;
-
-            // === Список покупок ===
             purchasesListBox = new ListBox
             {
-                Location = new System.Drawing.Point(12, 110),
-                Width = 608,
-                Height = 380,
-                Font = new System.Drawing.Font("Microsoft Sans Serif", 9F)
+                Location = new System.Drawing.Point(10, 100),
+                Width = 560,
+                Height = 300
             };
-
-            // === Добавляем элементы на форму ===
-            this.Controls.Add(nameLabel);
             this.Controls.Add(nameTextBox);
-            this.Controls.Add(priceLabel);
             this.Controls.Add(priceTextBox);
-            this.Controls.Add(categoryLabel);
             this.Controls.Add(categoryComboBox);
-            this.Controls.Add(dateLabel);
             this.Controls.Add(datePicker);
             this.Controls.Add(addPurchaseButton);
             this.Controls.Add(removePurchaseButton);
-            this.Controls.Add(filterLabel);
             this.Controls.Add(categoryFilterComboBox);
             this.Controls.Add(filterButton);
             this.Controls.Add(purchasesListBox);
-
             purchaseManager = new PurchaseManager();
             UpdatePurchasesList();
         }
-
         private void UpdatePurchasesList()
         {
             purchasesListBox.Items.Clear();
             foreach (var purchase in purchaseManager.Purchases)
             {
-                purchasesListBox.Items.Add($"{purchase.Name} - {purchase.Price} руб. ({purchase.Category})");
+                purchasesListBox.Items.Add($"{purchase.Name} - {purchase.Price} руб.({ purchase.Category})");
             }
         }
-
         private void AddPurchaseButton_Click(object sender, EventArgs e)
         {
             if (string.IsNullOrEmpty(nameTextBox.Text) || string.IsNullOrEmpty(priceTextBox.Text))
             {
-                MessageBox.Show("Заполните все поля!", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Заполните все поля!");
                 return;
             }
             decimal price;
             if (!decimal.TryParse(priceTextBox.Text, out price))
             {
-                MessageBox.Show("Неверный формат цены!", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Неверный формат цены!");
                 return;
             }
-            if (price <= 0)
-            {
-                MessageBox.Show("Цена должна быть положительной!", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-
-            Category category = (Category)Enum.Parse(typeof(Category), categoryComboBox.SelectedItem.ToString());
+            Category category = (Category)Enum.Parse(typeof(Category),
+            categoryComboBox.SelectedItem.ToString());
             DateTime date = datePicker.Value;
             Purchase newPurchase = new Purchase(nameTextBox.Text, price, category, date);
             try
@@ -197,19 +115,17 @@ namespace PurchaseManager
                 nameTextBox.Clear();
                 priceTextBox.Clear();
                 UpdatePurchasesList();
-                MessageBox.Show("Покупка успешно добавлена!", "Успех", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(ex.Message);
             }
         }
-
         private void RemovePurchaseButton_Click(object sender, EventArgs e)
         {
             if (purchasesListBox.SelectedIndex == -1)
             {
-                MessageBox.Show("Выберите покупку для удаления!", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Выберите покупку для удаления!");
                 return;
             }
             string selectedItem = purchasesListBox.SelectedItem.ToString();
@@ -220,41 +136,35 @@ namespace PurchaseManager
                 decimal price;
                 if (decimal.TryParse(parts[1].Split(' ')[0], out price))
                 {
-                    var purchaseToRemove = purchaseManager.Purchases.Find(p => p.Name == name && p.Price == price);
+                    var purchaseToRemove = purchaseManager.Purchases.Find(p => p.Name ==
+                    name && p.Price == price);
                     if (purchaseToRemove != null)
                     {
                         try
                         {
                             purchaseManager.RemovePurchase(purchaseToRemove);
                             UpdatePurchasesList();
-                            MessageBox.Show("Покупка успешно удалена!", "Успех", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         }
                         catch (Exception ex)
                         {
-                            MessageBox.Show(ex.Message, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            MessageBox.Show(ex.Message);
                         }
                     }
                 }
             }
         }
-
         private void FilterButton_Click(object sender, EventArgs e)
         {
-            if (categoryFilterComboBox.SelectedIndex == 0)
-            {
-                UpdatePurchasesList();
-                return;
-            }
-
-            Category category = (Category)Enum.Parse(typeof(Category), categoryFilterComboBox.SelectedItem.ToString());
+            Category category = categoryFilterComboBox.SelectedIndex == 0 ?
+            Category.Продукты : (Category)Enum.Parse(typeof(Category),
+            categoryFilterComboBox.SelectedItem.ToString());
             var filteredPurchases = purchaseManager.GetPurchasesByCategory(category);
             purchasesListBox.Items.Clear();
             foreach (var purchase in filteredPurchases)
             {
-                purchasesListBox.Items.Add($"{purchase.Name} - {purchase.Price} руб. ({purchase.Category})");
+                purchasesListBox.Items.Add($"{purchase.Name} - {purchase.Price} руб.({ purchase.Category})");
             }
         }
-
         [STAThread]
         static void Main()
         {
@@ -263,4 +173,5 @@ namespace PurchaseManager
             Application.Run(new PurchaseForm());
         }
     }
+
 }
