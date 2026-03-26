@@ -25,13 +25,13 @@ namespace UnitTest
             var manager = new PurchaseManager.PurchaseManager();
             manager.ClearAll();
             var purchase = new Purchase("Товар1", 100, Category.Продукты, DateTime.Now);
-            var initialCount = manager.Purchases.Count;
+            var initialCount = 1;
 
             // Act
             manager.AddPurchase(purchase);
 
             // Assert
-            Assert.AreEqual(initialCount + 1, manager.Purchases.Count);
+            Assert.AreEqual(initialCount, manager.Purchases.Count);
         }
 
         [TestMethod]
