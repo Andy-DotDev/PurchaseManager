@@ -42,49 +42,56 @@ namespace PurchaseManager
             {
                 Location = new System.Drawing.Point(12, 15),
                 Text = "Название:",
-                AutoSize = true
+                AutoSize = true,
+                Name = "nameLabel"
             };
 
             priceLabel = new Label
             {
                 Location = new System.Drawing.Point(180, 15),
                 Text = "Цена:",
-                AutoSize = true
+                AutoSize = true,
+                Name = "priceLabel"
             };
 
             categoryLabel = new Label
             {
                 Location = new System.Drawing.Point(310, 15),
                 Text = "Категория:",
-                AutoSize = true
+                AutoSize = true,
+                Name = "categoryLabel"
             };
 
             dateLabel = new Label
             {
                 Location = new System.Drawing.Point(440, 15),
                 Text = "Дата:",
-                AutoSize = true
+                AutoSize = true,
+                Name = "dateLabel"
             };
 
             nameTextBox = new TextBox
             {
                 Location = new System.Drawing.Point(12, 35),
                 Width = 155,
-                PlaceholderText = "Название"
+                PlaceholderText = "Название",
+                Name = "nameTextBox"
             };
 
             priceTextBox = new TextBox
             {
                 Location = new System.Drawing.Point(180, 35),
                 Width = 115,
-                PlaceholderText = "Цена"
+                PlaceholderText = "Цена",
+                Name = "priceTextBox"
             };
 
             categoryComboBox = new ComboBox
             {
                 Location = new System.Drawing.Point(310, 35),
                 Width = 115,
-                DropDownStyle = ComboBoxStyle.DropDownList
+                DropDownStyle = ComboBoxStyle.DropDownList,
+                Name = "categoryComboBox"
             };
             categoryComboBox.Items.AddRange(new object[] { "Продукты", "Техника", "Одежда", "Прочее" });
             categoryComboBox.SelectedIndex = 0;
@@ -93,7 +100,8 @@ namespace PurchaseManager
             {
                 Location = new System.Drawing.Point(440, 35),
                 Width = 170,
-                Format = DateTimePickerFormat.Short
+                Format = DateTimePickerFormat.Short,
+                Name = "datePicker"
             };
 
             addPurchaseButton = new Button
@@ -101,7 +109,8 @@ namespace PurchaseManager
                 Location = new System.Drawing.Point(12, 70),
                 Text = "Добавить",
                 Width = 100,
-                Height = 30
+                Height = 30,
+                Name = "addPurchaseButton"
             };
             addPurchaseButton.Click += AddPurchaseButton_Click;
 
@@ -110,7 +119,8 @@ namespace PurchaseManager
                 Location = new System.Drawing.Point(125, 70),
                 Text = "Удалить",
                 Width = 100,
-                Height = 30
+                Height = 30,
+                Name = "removePurchaseButton"
             };
             removePurchaseButton.Click += RemovePurchaseButton_Click;
 
@@ -118,14 +128,16 @@ namespace PurchaseManager
             {
                 Location = new System.Drawing.Point(250, 75),
                 Text = "Фильтр по категории:",
-                AutoSize = true
+                AutoSize = true,
+                Name = "filterLabel"
             };
 
             categoryFilterComboBox = new ComboBox
             {
                 Location = new System.Drawing.Point(400, 72),
                 Width = 120,
-                DropDownStyle = ComboBoxStyle.DropDownList
+                DropDownStyle = ComboBoxStyle.DropDownList,
+                Name = "categoryFilterComboBox"
             };
             categoryFilterComboBox.Items.AddRange(new object[] { "Все категории", "Продукты", "Техника", "Одежда", "Прочее" });
             categoryFilterComboBox.SelectedIndex = 0;
@@ -135,7 +147,8 @@ namespace PurchaseManager
                 Location = new System.Drawing.Point(530, 70),
                 Text = "Фильтровать",
                 Width = 90,
-                Height = 30
+                Height = 30,
+                Name = "filterButton"
             };
             filterButton.Click += FilterButton_Click;
 
@@ -144,6 +157,7 @@ namespace PurchaseManager
                 Location = new System.Drawing.Point(12, 110),
                 Width = 608,
                 Height = 380,
+                Name = "purchasesListBox",
                 Font = new System.Drawing.Font("Microsoft Sans Serif", 9F)
             };
             #endregion
@@ -154,6 +168,7 @@ namespace PurchaseManager
                 Location = new System.Drawing.Point(12, 500),
                 Width = 608,
                 Height = 190,
+                Name = "analysisGroup",
                 Font = new System.Drawing.Font("Microsoft Sans Serif", 9F)
             };
 
@@ -162,7 +177,8 @@ namespace PurchaseManager
                 Text = "По категориям",
                 Location = new System.Drawing.Point(10, 25),
                 Width = 110,
-                Height = 25
+                Height = 25,
+                Name = "btnByCategory"
             };
             btnByCategory.Click += BtnByCategory_Click;
 
@@ -171,7 +187,8 @@ namespace PurchaseManager
                 Text = "За период",
                 Location = new System.Drawing.Point(130, 25),
                 Width = 110,
-                Height = 25
+                Height = 25,
+                Name = "btnByPeriod"
             };
             btnByPeriod.Click += BtnByPeriod_Click;
 
@@ -180,7 +197,8 @@ namespace PurchaseManager
                 Text = "Экспорт в CSV",
                 Location = new System.Drawing.Point(250, 25),
                 Width = 110,
-                Height = 25
+                Height = 25,
+                Name = "btnExport"
             };
             btnExport.Click += BtnExport_Click;
 
@@ -188,7 +206,8 @@ namespace PurchaseManager
             {
                 Text = "Период:",
                 Location = new System.Drawing.Point(10, 60),
-                AutoSize = true
+                AutoSize = true,
+                Name = "periodLabel"
             };
 
             dateStart = new DateTimePicker
@@ -196,7 +215,8 @@ namespace PurchaseManager
                 Location = new System.Drawing.Point(80, 57),
                 Width = 120,
                 Format = DateTimePickerFormat.Short,
-                Value = DateTime.Now.AddMonths(-1)
+                Value = DateTime.Now.AddMonths(-1),
+                Name = "dateStart"
             };
 
             dateEnd = new DateTimePicker
@@ -204,7 +224,8 @@ namespace PurchaseManager
                 Location = new System.Drawing.Point(210, 57),
                 Width = 120,
                 Format = DateTimePickerFormat.Short,
-                Value = DateTime.Now
+                Value = DateTime.Now,
+                Name = "dateEnd"
             };
             resultLabel = new Label
             {
@@ -213,6 +234,7 @@ namespace PurchaseManager
                 Height = 90,
                 AutoSize = false,
                 ForeColor = System.Drawing.Color.DarkBlue,
+                Name = "resultLabel",
                 Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Italic)
             };
 
@@ -254,7 +276,8 @@ namespace PurchaseManager
                 Text = "Показать график",
                 Location = new System.Drawing.Point(370, 25),
                 Width = 110,
-                Height = 25
+                Height = 25,
+                Name = "btnToggleChart"
             };
             btnToggleChart.Click += BtnToggleChart_Click;
             analysisGroup.Controls.Add(btnToggleChart);
