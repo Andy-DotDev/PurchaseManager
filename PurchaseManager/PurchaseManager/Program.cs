@@ -1,7 +1,11 @@
+п»їusing System.Text;
+using System.Windows.Forms.DataVisualization.Charting;
+
 namespace PurchaseManager
 {
     public class PurchaseForm : Form
     {
+        #region Ads
         private PurchaseManager purchaseManager;
         private Label nameLabel;
         private TextBox nameTextBox;
@@ -18,12 +22,18 @@ namespace PurchaseManager
         private Button filterButton;
         private ListBox purchasesListBox;
         private List<Purchase> currentDisplayedPurchases;
+        private DateTimePicker dateStart;
+        private DateTimePicker dateEnd;
+        private Label resultLabel;
+        private Chart expenseChart;
+        #endregion
 
         public PurchaseForm()
         {
-            this.Text = "Управление покупками";
+            #region MainForm
+            this.Text = "РЈРїСЂР°РІР»РµРЅРёРµ РїРѕРєСѓРїРєР°РјРё";
             this.Width = 650;
-            this.Height = 550;
+            this.Height = 970;
             this.FormBorderStyle = FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
 
@@ -31,28 +41,28 @@ namespace PurchaseManager
             nameLabel = new Label
             {
                 Location = new System.Drawing.Point(12, 15),
-                Text = "Название:",
+                Text = "РќР°Р·РІР°РЅРёРµ:",
                 AutoSize = true
             };
 
             priceLabel = new Label
             {
                 Location = new System.Drawing.Point(180, 15),
-                Text = "Цена:",
+                Text = "Р¦РµРЅР°:",
                 AutoSize = true
             };
 
             categoryLabel = new Label
             {
                 Location = new System.Drawing.Point(310, 15),
-                Text = "Категория:",
+                Text = "РљР°С‚РµРіРѕСЂРёСЏ:",
                 AutoSize = true
             };
 
             dateLabel = new Label
             {
                 Location = new System.Drawing.Point(440, 15),
-                Text = "Дата:",
+                Text = "Р”Р°С‚Р°:",
                 AutoSize = true
             };
 
@@ -60,14 +70,14 @@ namespace PurchaseManager
             {
                 Location = new System.Drawing.Point(12, 35),
                 Width = 155,
-                PlaceholderText = "Название"
+                PlaceholderText = "РќР°Р·РІР°РЅРёРµ"
             };
 
             priceTextBox = new TextBox
             {
                 Location = new System.Drawing.Point(180, 35),
                 Width = 115,
-                PlaceholderText = "Цена"
+                PlaceholderText = "Р¦РµРЅР°"
             };
 
             categoryComboBox = new ComboBox
@@ -76,7 +86,7 @@ namespace PurchaseManager
                 Width = 115,
                 DropDownStyle = ComboBoxStyle.DropDownList
             };
-            categoryComboBox.Items.AddRange(new object[] { "Продукты", "Техника", "Одежда", "Прочее" });
+            categoryComboBox.Items.AddRange(new object[] { "РџСЂРѕРґСѓРєС‚С‹", "РўРµС…РЅРёРєР°", "РћРґРµР¶РґР°", "РџСЂРѕС‡РµРµ" });
             categoryComboBox.SelectedIndex = 0;
 
             datePicker = new DateTimePicker
@@ -89,7 +99,7 @@ namespace PurchaseManager
             addPurchaseButton = new Button
             {
                 Location = new System.Drawing.Point(12, 70),
-                Text = "Добавить",
+                Text = "Р”РѕР±Р°РІРёС‚СЊ",
                 Width = 100,
                 Height = 30
             };
@@ -98,7 +108,7 @@ namespace PurchaseManager
             removePurchaseButton = new Button
             {
                 Location = new System.Drawing.Point(125, 70),
-                Text = "Удалить",
+                Text = "РЈРґР°Р»РёС‚СЊ",
                 Width = 100,
                 Height = 30
             };
@@ -107,7 +117,7 @@ namespace PurchaseManager
             filterLabel = new Label
             {
                 Location = new System.Drawing.Point(250, 75),
-                Text = "Фильтр по категории:",
+                Text = "Р¤РёР»СЊС‚СЂ РїРѕ РєР°С‚РµРіРѕСЂРёРё:",
                 AutoSize = true
             };
 
@@ -117,13 +127,13 @@ namespace PurchaseManager
                 Width = 120,
                 DropDownStyle = ComboBoxStyle.DropDownList
             };
-            categoryFilterComboBox.Items.AddRange(new object[] { "Все категории", "Продукты", "Техника", "Одежда", "Прочее" });
+            categoryFilterComboBox.Items.AddRange(new object[] { "Р’СЃРµ РєР°С‚РµРіРѕСЂРёРё", "РџСЂРѕРґСѓРєС‚С‹", "РўРµС…РЅРёРєР°", "РћРґРµР¶РґР°", "РџСЂРѕС‡РµРµ" });
             categoryFilterComboBox.SelectedIndex = 0;
 
             filterButton = new Button
             {
                 Location = new System.Drawing.Point(530, 70),
-                Text = "Фильтровать",
+                Text = "Р¤РёР»СЊС‚СЂРѕРІР°С‚СЊ",
                 Width = 90,
                 Height = 30
             };
@@ -136,7 +146,120 @@ namespace PurchaseManager
                 Height = 380,
                 Font = new System.Drawing.Font("Microsoft Sans Serif", 9F)
             };
+            #endregion
+            #region Analyze
+            var analysisGroup = new GroupBox
+            {
+                Text = "РђРЅР°Р»РёР· СЂР°СЃС…РѕРґРѕРІ",
+                Location = new System.Drawing.Point(12, 500),
+                Width = 608,
+                Height = 190,
+                Font = new System.Drawing.Font("Microsoft Sans Serif", 9F)
+            };
 
+            var btnByCategory = new Button
+            {
+                Text = "РџРѕ РєР°С‚РµРіРѕСЂРёСЏРј",
+                Location = new System.Drawing.Point(10, 25),
+                Width = 110,
+                Height = 25
+            };
+            btnByCategory.Click += BtnByCategory_Click;
+
+            var btnByPeriod = new Button
+            {
+                Text = "Р—Р° РїРµСЂРёРѕРґ",
+                Location = new System.Drawing.Point(130, 25),
+                Width = 110,
+                Height = 25
+            };
+            btnByPeriod.Click += BtnByPeriod_Click;
+
+            var btnExport = new Button
+            {
+                Text = "Р­РєСЃРїРѕСЂС‚ РІ CSV",
+                Location = new System.Drawing.Point(250, 25),
+                Width = 110,
+                Height = 25
+            };
+            btnExport.Click += BtnExport_Click;
+
+            var periodLabel = new Label
+            {
+                Text = "РџРµСЂРёРѕРґ:",
+                Location = new System.Drawing.Point(10, 60),
+                AutoSize = true
+            };
+
+            dateStart = new DateTimePicker
+            {
+                Location = new System.Drawing.Point(80, 57),
+                Width = 120,
+                Format = DateTimePickerFormat.Short,
+                Value = DateTime.Now.AddMonths(-1)
+            };
+
+            dateEnd = new DateTimePicker
+            {
+                Location = new System.Drawing.Point(210, 57),
+                Width = 120,
+                Format = DateTimePickerFormat.Short,
+                Value = DateTime.Now
+            };
+            resultLabel = new Label
+            {
+                Location = new System.Drawing.Point(10, 90),
+                Width = 580,
+                Height = 90,
+                AutoSize = false,
+                ForeColor = System.Drawing.Color.DarkBlue,
+                Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Italic)
+            };
+
+            // Р”РёР°РіСЂР°РјРјР°
+            expenseChart = new Chart
+            {
+                Location = new System.Drawing.Point(12, 660), 
+                Width = 608,
+                Height = 280,
+                Visible = false  
+            };
+
+            var chartArea = new ChartArea("MainArea");
+            expenseChart.ChartAreas.Add(chartArea);
+
+            var series = new Series("Categories")
+            {
+                ChartType = SeriesChartType.Pie,
+                LegendText = "#VALX",
+                XValueMember = "Category",
+                YValueMembers = "Amount",
+                Label = "#VALX: #VAL{C} СЂСѓР±.",
+                LabelAngle = -45,
+                IsValueShownAsLabel = true
+            };
+            expenseChart.Series.Add(series);
+
+            var legend = new Legend("Legend")
+            {
+                Docking = Docking.Right,
+                Font = new System.Drawing.Font("Microsoft Sans Serif", 9F)
+            };
+            expenseChart.Legends.Add(legend);
+
+            expenseChart.Titles.Add("Р Р°СЃС…РѕРґС‹ РїРѕ РєР°С‚РµРіРѕСЂРёСЏРј");
+
+            var btnToggleChart = new Button
+            {
+                Text = "РџРѕРєР°Р·Р°С‚СЊ РіСЂР°С„РёРє",
+                Location = new System.Drawing.Point(370, 25),
+                Width = 110,
+                Height = 25
+            };
+            btnToggleChart.Click += BtnToggleChart_Click;
+            analysisGroup.Controls.Add(btnToggleChart);
+            #endregion
+            #region ObjectsForm
             this.Controls.Add(nameLabel);
             this.Controls.Add(nameTextBox);
             this.Controls.Add(priceLabel);
@@ -151,12 +274,24 @@ namespace PurchaseManager
             this.Controls.Add(categoryFilterComboBox);
             this.Controls.Add(filterButton);
             this.Controls.Add(purchasesListBox);
+            this.Controls.Add(analysisGroup);
+            this.Controls.Add(expenseChart);
+            analysisGroup.Controls.Add(btnByCategory);
+            analysisGroup.Controls.Add(btnByPeriod);
+            analysisGroup.Controls.Add(btnExport);
+            analysisGroup.Controls.Add(periodLabel);
+            analysisGroup.Controls.Add(dateStart);
+            analysisGroup.Controls.Add(dateEnd);
+            analysisGroup.Controls.Add(resultLabel);
 
             purchaseManager = new PurchaseManager();
             currentDisplayedPurchases = new List<Purchase>();
             UpdatePurchasesList();
-        }
+            #endregion
 
+
+        }
+        #region EventsMain
         private void UpdatePurchasesList()
         {
             purchasesListBox.Items.Clear();
@@ -164,7 +299,7 @@ namespace PurchaseManager
 
             foreach (var purchase in purchaseManager.Purchases)
             {
-                purchasesListBox.Items.Add($"{purchase.Name} - {purchase.Price} руб. ({purchase.Category})");
+                purchasesListBox.Items.Add($"{purchase.Name} - {purchase.Price} СЂСѓР±. ({purchase.Category})");
                 currentDisplayedPurchases.Add(purchase);
             }
         }
@@ -173,18 +308,18 @@ namespace PurchaseManager
         {
             if (string.IsNullOrEmpty(nameTextBox.Text) || string.IsNullOrEmpty(priceTextBox.Text))
             {
-                MessageBox.Show("Заполните все поля!", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Р—Р°РїРѕР»РЅРёС‚Рµ РІСЃРµ РїРѕР»СЏ!", "РћС€РёР±РєР°", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
             decimal price;
             if (!decimal.TryParse(priceTextBox.Text, out price))
             {
-                MessageBox.Show("Неверный формат цены!", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("РќРµРІРµСЂРЅС‹Р№ С„РѕСЂРјР°С‚ С†РµРЅС‹!", "РћС€РёР±РєР°", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
             if (price <= 0)
             {
-                MessageBox.Show("Цена должна быть положительной!", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Р¦РµРЅР° РґРѕР»Р¶РЅР° Р±С‹С‚СЊ РїРѕР»РѕР¶РёС‚РµР»СЊРЅРѕР№!", "РћС€РёР±РєР°", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -197,11 +332,11 @@ namespace PurchaseManager
                 nameTextBox.Clear();
                 priceTextBox.Clear();
                 UpdatePurchasesList();
-                MessageBox.Show("Покупка успешно добавлена!", "Успех", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("РџРѕРєСѓРїРєР° СѓСЃРїРµС€РЅРѕ РґРѕР±Р°РІР»РµРЅР°!", "РЈСЃРїРµС…", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(ex.Message, "РћС€РёР±РєР°", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -209,13 +344,13 @@ namespace PurchaseManager
         {
             if (purchasesListBox.SelectedIndex == -1)
             {
-                MessageBox.Show("Выберите покупку для удаления!", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Р’С‹Р±РµСЂРёС‚Рµ РїРѕРєСѓРїРєСѓ РґР»СЏ СѓРґР°Р»РµРЅРёСЏ!", "РћС€РёР±РєР°", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
             int selectedItem = purchasesListBox.SelectedIndex;
             DialogResult result = MessageBox.Show(
-               $"Вы уверены, что хотите удалить покупку?\n{purchasesListBox.SelectedItem}",
-               "Подтверждение удаления",
+               $"Р’С‹ СѓРІРµСЂРµРЅС‹, С‡С‚Рѕ С…РѕС‚РёС‚Рµ СѓРґР°Р»РёС‚СЊ РїРѕРєСѓРїРєСѓ?\n{purchasesListBox.SelectedItem}",
+               "РџРѕРґС‚РІРµСЂР¶РґРµРЅРёРµ СѓРґР°Р»РµРЅРёСЏ",
                MessageBoxButtons.YesNo,
                MessageBoxIcon.Question);
             if (result == DialogResult.Yes)
@@ -229,11 +364,11 @@ namespace PurchaseManager
 
                     UpdatePurchasesList();
 
-                    MessageBox.Show("Покупка успешно удалена!", "Успех", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show("РџРѕРєСѓРїРєР° СѓСЃРїРµС€РЅРѕ СѓРґР°Р»РµРЅР°!", "РЈСЃРїРµС…", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"Ошибка при удалении: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show($"РћС€РёР±РєР° РїСЂРё СѓРґР°Р»РµРЅРёРё: {ex.Message}", "РћС€РёР±РєР°", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }
@@ -248,12 +383,131 @@ namespace PurchaseManager
 
             Category category = (Category)Enum.Parse(typeof(Category), categoryFilterComboBox.SelectedItem.ToString());
             var filteredPurchases = purchaseManager.GetPurchasesByCategory(category);
+
             purchasesListBox.Items.Clear();
+            currentDisplayedPurchases.Clear();
             foreach (var purchase in filteredPurchases)
             {
-                purchasesListBox.Items.Add($"{purchase.Name} - {purchase.Price} руб. ({purchase.Category})");
+                purchasesListBox.Items.Add($"{purchase.Name} - {purchase.Price} СЂСѓР±. ({purchase.Category})");
+                currentDisplayedPurchases.Add(purchase);
             }
         }
+        #endregion
+        #region EventsAnalyze
+        private void BtnByCategory_Click(object sender, EventArgs e)
+        {
+            var analyzer = new ExpenseAnalyzer(purchaseManager.Purchases);
+            var stats = analyzer.GetTotalsByCategory();
+
+            if (stats.Count == 0)
+            {
+                resultLabel.Text = "РќРµС‚ РґР°РЅРЅС‹С… РґР»СЏ Р°РЅР°Р»РёР·Р°.";
+                return;
+            }
+
+            var report = new StringBuilder("Р Р°СЃС…РѕРґС‹ РїРѕ РєР°С‚РµРіРѕСЂРёСЏРј:\n");
+            foreach (var item in stats.OrderByDescending(x => x.Value))
+            {
+                report.AppendLine($" {item.Key}: {item.Value} СЂСѓР±.");
+            }
+            report.AppendLine($"РС‚РѕРіРѕ: {stats.Values.Sum()} СЂСѓР±.");
+            resultLabel.Text = report.ToString();
+            UpdateCategoryChart(stats);
+        }
+
+        private void UpdateCategoryChart(Dictionary<string, decimal> stats)
+        {
+            var series = expenseChart.Series["Categories"];
+            series.Points.Clear();
+
+            // Р”РѕР±Р°РІР»СЏРµРј РґР°РЅРЅС‹Рµ, СЃРѕСЂС‚РёСЂСѓСЏ РїРѕ СѓР±С‹РІР°РЅРёСЋ
+            foreach (var item in stats.OrderByDescending(x => x.Value))
+            {
+                series.Points.AddXY(item.Key, (double)item.Value);
+            }
+
+            var colors = new[] {
+        System.Drawing.Color.SkyBlue,
+        System.Drawing.Color.LightGreen,
+        System.Drawing.Color.LightCoral,
+        System.Drawing.Color.Khaki,
+        System.Drawing.Color.Plum
+    };
+            for (int i = 0; i < series.Points.Count; i++)
+            {
+                series.Points[i].Color = colors[i % colors.Length];
+            }
+
+            expenseChart.Visible = true;
+        }
+
+        private void BtnByPeriod_Click(object sender, EventArgs e)
+        {
+            var start = dateStart.Value;
+            var end = dateEnd.Value;
+
+            if (start > end)
+            {
+                MessageBox.Show("Р”Р°С‚Р° РЅР°С‡Р°Р»Р° РЅРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ РїРѕР·Р¶Рµ РґР°С‚С‹ РѕРєРѕРЅС‡Р°РЅРёСЏ!", "РћС€РёР±РєР°",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            var analyzer = new ExpenseAnalyzer(purchaseManager.Purchases);
+            var total = analyzer.GetTotalByPeriod(start, end);
+            var byCategory = analyzer.GetTotalsByCategoryForPeriod(start, end);
+
+            var report = new StringBuilder($"Р Р°СЃС…РѕРґС‹ СЃ {start:dd.MM} РїРѕ {end:dd.MM}:\n");
+            if (byCategory.Count == 0)
+            {
+                report.AppendLine("РќРµС‚ РїРѕРєСѓРїРѕРє Р·Р° РІС‹Р±СЂР°РЅРЅС‹Р№ РїРµСЂРёРѕРґ");
+            }
+            else
+            {
+                foreach (var item in byCategory.OrderByDescending(x => x.Value))
+                {
+                    report.AppendLine($"{item.Key}: {item.Value} СЂСѓР±.");
+                }
+            }
+            report.AppendLine($"РС‚РѕРіРѕ Р·Р° РїРµСЂРёРѕРґ: {total} СЂСѓР±.");
+            resultLabel.Text = report.ToString();
+        }
+        private void BtnToggleChart_Click(object sender, EventArgs e)
+        {
+            expenseChart.Visible = !expenseChart.Visible;
+            resultLabel.Visible = !expenseChart.Visible;
+
+            var btn = (Button)sender;
+            btn.Text = expenseChart.Visible ? "РџРѕРєР°Р·Р°С‚СЊ С‚РµРєСЃС‚" : "РџРѕРєР°Р·Р°С‚СЊ РіСЂР°С„РёРє";
+        }
+
+        private void BtnExport_Click(object sender, EventArgs e)
+        {
+            var saveDialog = new SaveFileDialog
+            {
+                Filter = "CSV С„Р°Р№Р»С‹|*.csv|Р’СЃРµ С„Р°Р№Р»С‹|*.*",
+                FileName = $"expenses_{DateTime.Now:yyyy-MM-dd}.csv",
+                Title = "Р­РєСЃРїРѕСЂС‚ СЂР°СЃС…РѕРґРѕРІ"
+            };
+
+            if (saveDialog.ShowDialog() == DialogResult.OK)
+            {
+                try
+                {
+                    var analyzer = new ExpenseAnalyzer(purchaseManager.Purchases);
+                    var csv = analyzer.ExportToCsv();
+                    System.IO.File.WriteAllText(saveDialog.FileName, csv, Encoding.UTF8);
+                    MessageBox.Show($"Р”Р°РЅРЅС‹Рµ СЌРєСЃРїРѕСЂС‚РёСЂРѕРІР°РЅС‹ РІ:\n{saveDialog.FileName}", "РЈСЃРїРµС…",
+                        MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"РћС€РёР±РєР° СЌРєСЃРїРѕСЂС‚Р°: {ex.Message}", "РћС€РёР±РєР°",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+        }
+#endregion
 
         [STAThread]
         static void Main()
